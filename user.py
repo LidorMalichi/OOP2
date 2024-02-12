@@ -61,3 +61,6 @@ class User:
     def print_notifications(self):
         for notification in self.__notifications:
             print(notification)
+
+
+            #ido

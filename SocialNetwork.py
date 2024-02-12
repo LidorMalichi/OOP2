@@ -34,3 +34,5 @@ class SocialNetwork:
         if user is not None and user.is_logged():
             user.make_offline()
             print(f"{username} disconnected")
+
+#ido

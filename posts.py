@@ -7,3 +7,4 @@ class Post:
         self.user = owner
         self.kind = kind
 
+#ido
