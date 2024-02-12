@@ -1,38 +1,44 @@
+from typing import Any
+
 from user import User
 
 
 class SocialNetwork:
     _instance = None  # Class variable to store the instance
 
-    def __new__(cls):
+    def __new__(cls, name):
         if cls._instance is None:
             cls._instance = super(SocialNetwork, cls).__new__(cls)
-            cls._instance.users_dict = {}  # Initialize the users_dict
+            cls._instance.users_list = []
+            cls._instance.name = name
+            print(f"The social network {cls._instance.name} was created!")
         return cls._instance
 
-    def add_user(self, user: User):
-        self.users_dict[user.get_username()] = user
-
-    def get_user(self, username: str) -> User:
-        return self.users_dict.get(username, None)
+    def get_user(self, username: str) -> Any | None:
+        for user in self.users_list:
+            if user.get_username() == username:
+                return user
+        return None
 
     def sign_up(self, username: str, password: str):
         # Check if username already exists, and the password length
-        if username not in self.users_dict and 4 <= len(password) <= 8:
+        if self.get_user(username) is None and 4 <= len(password) <= 8:
             user1 = User(username, password)
-            self.add_user(user1)
+            self.users_list.append(user1)
+            return user1
 
     def log_in(self, username: str, password: str):
-        user = self.users_dict.get(username, None)
-
+        user = self.get_user(username)
         if user is not None and user.get_password() == password:
             user.make_online()
-            print (f"{username} connected")
+            print(f"{username} connected")
 
     def log_out(self, username: str):
-        user = self.users_dict.get(username, None)
-        if user is not None and user.is_logged():
+        user = self.get_user(username)
+        if user is not None and user.is_online():
             user.make_offline()
             print(f"{username} disconnected")
 
-#ido
+    def __repr__(self):
+        users_repr = "\n".join([user.__repr__() for user in self.users_list])
+        return f"{self.name} Social Network:\n{users_repr}"
