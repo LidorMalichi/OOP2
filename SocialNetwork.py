@@ -9,6 +9,7 @@ class SocialNetwork:
             cls._instance = super(SocialNetwork, cls).__new__(cls)
             cls._instance.users_dict = {}  # Initialize the users_dict
             cls._instance.name = name
+            print(f'The social network {name} was created!')
         return cls._instance
 
     def __add_user(self, user: User):
@@ -29,15 +30,15 @@ class SocialNetwork:
 
         if user is not None and user.get_password() == password:
             user.make_online()
-            print (f"{username} connected\n")
+            print (f"{username} connected")
 
     def log_out(self, username: str):
         user = self.users_dict.get(username, None)
         if user is not None and user.is_logged():
             user.make_offline()
-            print(f"{username} disconnected\n")
+            print(f"{username} disconnected")
 
 
     def __repr__(self) -> str:
         deli = "\n"
-        return  f'{self.name} social network:\n\n{"".join([use.__repr__() + deli for use in self.users_dict.values()])}'
+        return  f'{self.name} social network:\n{"".join([use.__repr__() + deli for use in self.users_dict.values()])}'

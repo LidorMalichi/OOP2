@@ -37,11 +37,11 @@ class follower:
 
     def notify(self, *args):
         self.__notifications.append(args[0])
-        if "liked" or "commented" in args[0]:
-            print(f'notification to {self.__name}: {"".join([arg for arg in args])}\n')
+        if any(x in args[0] for x in ["liked" , "commented"]):
+            print(f'notification to {self.__name}: {"".join([arg for arg in args])}')
         
     
     def print_notifications(self):
-        print(f"{self.__name}'s notifications:\n")
+        print(f"{self.__name}'s notifications:")
         for notification in self.__notifications:
-            print(notification + '\n')
+            print(notification)

@@ -12,7 +12,7 @@ class User(followable, follower):
         self.__is_Logged: bool = True
 
     def __repr__(self):
-        return f"User name: {self.__username}, Number of posts: {self.__num_of_posts}, Number of followers: {self.num_of_followers()}\n"
+        return f"User name: {self.__username}, Number of posts: {self.__num_of_posts}, Number of followers: {self.num_of_followers()}"
 
     def get_username(self) -> str:
         return self.__username
@@ -32,11 +32,11 @@ class User(followable, follower):
     def follow(self, user: 'User'):
         if self.__username != user.get_username():
             if self.start_follow(user):
-                print(f"{self.__username} started following {user.get_username()}\n")
+                print(f"{self.__username} started following {user.get_username()}")
 
     def unfollow(self, user: 'User'):
         if self.stop_follow(user):
-            print(f"{self.__username} unfollowed {user.get_username()}\n")
+            print(f"{self.__username} unfollowed {user.get_username()}")
 
 
     def publish_post(self, *args):
