@@ -1,17 +1,18 @@
 from typing import List
+from follow import followable, follower
 
 
-class User:
+class User(followable, follower):
     def __init__(self, username: str, password: str):
+        followable.__init__(self)
+        follower.__init__(self, username)
         self.__username = username
         self.__password = password
-        self.__num_of_followers = 0
         self.__num_of_posts = 0
-        self.__followers = []
         self.__is_Logged: bool = True
-        self.__notifications: List[str] = []
+
     def __repr__(self):
-        return f"User name: {self.__username}, Number of posts: {self.__num_of_posts}, Number of followers: {self.__num_of_followers}"
+        return f"User name: {self.__username}, Number of posts: {self.__num_of_posts}, Number of followers: {self.num_of_followers()}\n"
 
     def get_username(self) -> str:
         return self.__username
@@ -28,39 +29,32 @@ class User:
     def get_password(self) -> str:
         return self.__password
 
-    def get_num_of_followers(self) -> int:
-        return self.__num_of_followers
-
     def follow(self, user: 'User'):
-        user.add_follower(self)
+        if self.__username != user.get_username():
+            if self.start_follow(user):
+                print(f"{self.__username} started following {user.get_username()}\n")
 
-    def unfollow(self, unfollower: 'User'):
-        unfollower.remove_follower(self)
-
-    def add_follower(self, follower: 'User'):
-        if follower not in self.__followers:
-            print(f"{follower.get_username()} started following {self.__username}")
-            self.__followers.append(follower)
-            follower.increment_followers()
-
-    def remove_follower(self, unfollower: 'User'):
-        if unfollower in self.__followers:
-            print(f"{unfollower.get_username()} unfollowed {self.__username}")
-            self.__followers.remove(unfollower)
-            unfollower.decrement_followers()
-
-    def increment_followers(self):
-        self.__num_of_followers += 1
-
-    def decrement_followers(self):
-        self.__num_of_followers -= 1
-
-    def add_notification(self, notification: str):
-        self.__notifications.append(notification)
-
-    def print_notifications(self):
-        for notification in self.__notifications:
-            print(notification)
+    def unfollow(self, user: 'User'):
+        if self.stop_follow(user):
+            print(f"{self.__username} unfollowed {user.get_username()}\n")
 
 
-            #ido
+    def publish_post(self, *args):
+        
+        if(args[0] == "Text"):
+            post = TextPost(self, *args)
+        
+        if(args[0] == "Image"):
+            post = ImagePost(self, *args)
+        
+        if(args[0] == "Sale"):
+            post =  SalePost(self, *args)
+        
+        self.notify_followers(f"{self.get_username()} has a new post")
+        print(post)
+
+        self.__num_of_posts += 1
+
+        return post
+        
+from posts import *
