@@ -28,7 +28,7 @@ class TextPost(Post):
         self.__text = text
     
     def __repr__(self) -> str:
-        return f"{self._owner.get_username()} published a post:\n{self.__text}\n" 
+        return f'{self._owner.get_username()} published a post:\n"{self.__text}"\n' 
     
 class ImagePost(Post):
 
