@@ -55,7 +55,7 @@ class SalePost(Post):
     def discount(self, discount: int , passw: str):
         if passw == self._owner.get_password() == passw and self.__sold == "For sale!":
             self.__price *= (1 - discount/100)
-            print(f"Discount on {self._owner.get_username()} product! the new price is {self.__price}")
+            print(f"Discount on {self._owner.get_username()} product! the new price is: {self.__price}")
 
     def sold(self, passw: str):
         if passw == self._owner.get_password():
@@ -63,4 +63,4 @@ class SalePost(Post):
             print(f"{self._owner.get_username()}'s product is sold")
     
     def __repr__(self) -> str:
-        return f"{self._owner.get_username()} posted a product for sale:\n{self.__sold} {self.__product}, {self.__price}, pickup from: {self.__location}\n"
+        return f"{self._owner.get_username()} posted a product for sale:\n{self.__sold} {self.__product}, price: {self.__price}, pickup from: {self.__location}\n"
