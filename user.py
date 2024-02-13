@@ -1,6 +1,18 @@
-from tkinter import Image
 from typing import List
 from notification import Notification
+
+
+class PostFactory:
+    @staticmethod
+    def create_post(owner: 'User', kind: str, *args):
+        if kind == "Sale":
+            return SalePost(owner, *args)
+        elif kind == "Text":
+            return TextPost(owner, *args)
+        elif kind == "Image":
+            return ImagePost(owner, *args)
+        else:
+            raise ValueError(f"Invalid post kind: {kind}")
 
 
 class User:
@@ -71,17 +83,8 @@ class User:
             notification = Notification(notification_type, self.get_username())
             follower.update(notification)
 
-    def create_post(self, kind: str, *args):
-        # Factory method to create different types of posts
-        if kind == "Sale":
-            return SalePost(self, *args)
-        elif kind == "Text":
-            return TextPost(self, *args)
-        elif kind == "Image":
-            return ImagePost(self, *args)
-
     def publish_post(self, kind: str, *args):
-        post = self.create_post(kind, *args)
+        post = PostFactory.create_post(self, kind, *args)
         print(post)
         self.notify_followers("new_post")
         self.__num_of_posts += 1

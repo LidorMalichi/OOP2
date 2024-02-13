@@ -1,5 +1,5 @@
-from user import User
 from notification import Notification
+from user import User
 
 
 class Post:
@@ -38,7 +38,7 @@ class SalePost(Post):
     def discount(self, percent: int, password: str) -> None:
         if self.available =="for sale!" and self.owner.get_password() == password:
             self.price *= (1 - percent / 100)
-            print(f"discount on {self.owner.get_username()} product! the new price is:{self.price}")
+            print(f"discount on {self.owner.get_username()} product! the new price is: {self.price}")
 
     def __repr__(self):
         return (f"{self.owner.get_username()} posted a product for sale:"
