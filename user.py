@@ -52,7 +52,7 @@ class User:
         self.__notifications: List[str] = []
 
     def __repr__(self):
-        return (f"Uiser name: {self.__username}, Number of posts: {self.__num_of_posts}, "
+        return (f"User name: {self.__username}, Number of posts: {self.__num_of_posts}, "
                 f"Number of followers: {self.get_num_of_followers()}")
 
     def get_followers(self):
