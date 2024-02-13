@@ -1,5 +1,7 @@
 from notification import Notification
 from user import User
+import matplotlib.pyplot as plt
+import matplotlib.image as img
 
 
 class Post:
@@ -31,12 +33,12 @@ class SalePost(Post):
         self.available = "for sale!"
 
     def sold(self, password: str) -> None:
-        if self.owner.get_password() == password and self.available=="for sale!":
+        if self.owner.get_password() == password and self.available == "for sale!":
             self.available = "sold!"
             print(f"{self.owner.get_username()}'s product is sold.")
 
     def discount(self, percent: int, password: str) -> None:
-        if self.available =="for sale!" and self.owner.get_password() == password:
+        if self.available == "for sale!" and self.owner.get_password() == password:
             self.price *= (1 - percent / 100)
             print(f"discount on {self.owner.get_username()} product! the new price is: {self.price}")
 
@@ -52,7 +54,8 @@ class ImagePost(Post):
         self.image_path, = args
 
     def display(self):
-        return
+        image = img.imread(self.image_path)
+        plt.imshow(image)
 
     def __repr__(self):
         return f"{self.owner.get_username()} posted a picture"
