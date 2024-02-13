@@ -3,4 +3,3 @@ class Notification:
         self.type = notification_type
         self.sender = sender
         self.content = content
-

@@ -3,19 +3,46 @@ from notification import Notification
 
 
 class PostFactory:
+    """
+       Factory class responsible for creating different types of posts.
+
+       Design Pattern:
+       - Factory Method Pattern: Provides an interface for creating posts, allowing subclasses to alter
+       the type of posts that will be created.
+
+       Methods:
+       - create_post(owner: 'User', kind: str, *args) -> Post: Create a post of the specified kind
+       with the given arguments.
+       """
+
     @staticmethod
     def create_post(owner: 'User', kind: str, *args):
-        if kind == "Sale":
-            return SalePost(owner, *args)
-        elif kind == "Text":
-            return TextPost(owner, *args)
-        elif kind == "Image":
-            return ImagePost(owner, *args)
+        post_types = {"Sale": SalePost, "Text": TextPost, "Image": ImagePost}
+        if kind in post_types:
+            return post_types[kind](owner, *args)
         else:
             raise ValueError(f"Invalid post kind: {kind}")
 
 
 class User:
+    """
+        Represents a user in a social network.
+
+        Design Pattern:
+        - Observer Pattern: Users act as observers to their own posts, receiving notifications when their
+          posts are liked, commented, or when they have new posts.
+        - Subject Pattern: Each user acts as a subject, notifying their followers when they publish a new post.
+
+        Attributes:
+        - __username (str): The username of the user.
+        - __password (str): The password of the user.
+        - __num_of_posts (int): The number of posts published by the user.
+        - __followers (List[User]): List of users who follow the current user.
+        - __is_online (bool): The online status of the user.
+        - __notifications (List[str]): List of notifications received by the user.
+        - __observers (List[User]): List of users observing the current user.
+        """
+
     def __init__(self, username: str, password: str):
         self.__username = username
         self.__password = password
@@ -50,17 +77,17 @@ class User:
         return len(self.__followers)
 
     def follow(self, user: 'User'):
-        user.add_follower(self)
+        user.__add_follower(self)
 
     def unfollow(self, unfollower: 'User'):
-        unfollower.remove_follower(self)
+        unfollower.__remove_follower(self)
 
-    def add_follower(self, follower: 'User'):
+    def __add_follower(self, follower: 'User'):
         if follower not in self.__followers:
             print(f"{follower.get_username()} started following {self.__username}")
             self.__followers.append(follower)
 
-    def remove_follower(self, unfollower: 'User'):
+    def __remove_follower(self, unfollower: 'User'):
         if unfollower in self.__followers:
             print(f"{unfollower.get_username()} unfollowed {self.__username}")
             self.__followers.remove(unfollower)
@@ -71,6 +98,7 @@ class User:
             print(notification)
 
     def update(self, notification):
+        # Handle notifications received by the user.
         if notification.type == "like":
             self.__notifications.append(f"{notification.sender} liked your post")
         elif notification.type == "comment":
@@ -79,11 +107,13 @@ class User:
             self.__notifications.append(f"{notification.sender} has a new post")
 
     def notify_followers(self, notification_type):
+        # Notify all followers about a specific type of notification.
         for follower in self.__followers:
             notification = Notification(notification_type, self.get_username())
             follower.update(notification)
 
     def publish_post(self, kind: str, *args):
+        # Publish a post of the specified kind and notify followers.
         post = PostFactory.create_post(self, kind, *args)
         print(post)
         self.notify_followers("new_post")

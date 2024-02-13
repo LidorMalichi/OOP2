@@ -82,7 +82,6 @@ def main():
     network.log_in("Charlie", "pass3")
     print()
 
-
     # User printing
     print(u1)
     print()
