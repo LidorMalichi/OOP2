@@ -59,7 +59,7 @@ class SalePost(Post):
 
     def sold(self, passw: str):
         if passw == self._owner.get_password():
-            self.__sold = "sold!"
+            self.__sold = "Sold!"
             print(f"{self._owner.get_username()}'s product is sold")
     
     def __repr__(self) -> str:
