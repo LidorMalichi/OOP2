@@ -1,10 +1,10 @@
-from notification import Notification
+from notification import Notification, Observable
 from user import User
 import matplotlib.pyplot as plt
 import matplotlib.image as img
 
 
-class Post:
+class Post(Observable):
     """
         Represents a generic post in a social network.
 
@@ -20,14 +20,17 @@ class Post:
         - comment(commenter: User, text: str): Allow a user to comment on the post,
           sending a notification to the post owner.
         """
+
     def __init__(self, owner: User, kind: str):
-        self.owner = owner
+        super().__init__()
         self.kind = kind
+        self.add_observer(owner)
+        self.owner = owner
 
     def like(self, liker: User):
         if self.owner.get_username() != liker.get_username():
             notification = Notification("like", liker.get_username())
-            self.owner.update(notification)
+            self.notify_observers(notification)
             print(f"notification to {self.owner.get_username()}: "
                   f"{liker.get_username()} liked your post")
 
@@ -53,6 +56,7 @@ class SalePost(Post):
        - sold(password: str): Mark the product as sold.
        - discount(percent: int, password: str): Apply a discount to the product price.
        """
+
     def __init__(self, owner: 'User', *args):
         super().__init__(owner, kind="sale")
         self.product, self.price, self.pick_up_location = args
@@ -86,7 +90,8 @@ class ImagePost(Post):
        Methods:
        - display(): Display the image.
        """
-    def __init__(self, owner: 'User', *args):
+
+    def __init__(self, owner, *args):
         super().__init__(owner, kind="image")
         self.image_path, = args
 
@@ -106,8 +111,9 @@ class TextPost(Post):
         Attributes:
         - text_content (str): The content of the text post.
         """
-    def __init__(self, owner: 'User', *args):
-        super().__init__(owner, kind="text")
+
+    def __init__(self, owner: User, *args):
+        super().__init__(owner,kind="text")
         self.text_content, = args
 
     def __repr__(self):

@@ -1,5 +1,5 @@
-from typing import List
-from notification import Notification
+
+from notification import Notification, Observer, Observable
 
 
 class PostFactory:
@@ -16,15 +16,15 @@ class PostFactory:
        """
 
     @staticmethod
-    def create_post(owner: 'User', kind: str, *args):
+    def create_post(creator, kind: str, *args):
         post_types = {"Sale": SalePost, "Text": TextPost, "Image": ImagePost}
         if kind in post_types:
-            return post_types[kind](owner, *args)
+            return post_types[kind](creator, *args)
         else:
             raise ValueError(f"Invalid post kind: {kind}")
 
 
-class User:
+class User(Observer, Observable):
     """
         Represents a user in a social network.
 
@@ -44,19 +44,16 @@ class User:
         """
 
     def __init__(self, username: str, password: str):
+        Observer.__init__(self)  # Call Observer's constructor
+        Observable.__init__(self)  # Call Observable's constructor
         self.__username = username
         self.__password = password
         self.__num_of_posts = 0
-        self.__followers = []
         self.__is_online: bool = True
-        self.__notifications: List[str] = []
 
     def __repr__(self):
         return (f"User name: {self.__username}, Number of posts: {self.__num_of_posts}, "
                 f"Number of followers: {self.get_num_of_followers()}")
-
-    def get_followers(self):
-        return self.__followers
 
     def get_username(self) -> str:
         return self.__username
@@ -74,49 +71,29 @@ class User:
         return self.__password
 
     def get_num_of_followers(self) -> int:
-        return len(self.__followers)
+        return self.get_num_of_observers()
 
     def follow(self, user: 'User'):
-        user.__add_follower(self)
+        if self not in user.observers:
+            print(f"{self.get_username()} started following {user.__username}")
+            user.add_observer(self)
 
-    def unfollow(self, unfollower: 'User'):
-        unfollower.__remove_follower(self)
-
-    def __add_follower(self, follower: 'User'):
-        if follower not in self.__followers:
-            print(f"{follower.get_username()} started following {self.__username}")
-            self.__followers.append(follower)
-
-    def __remove_follower(self, unfollower: 'User'):
-        if unfollower in self.__followers:
-            print(f"{unfollower.get_username()} unfollowed {self.__username}")
-            self.__followers.remove(unfollower)
+    def unfollow(self, to_un_follow: 'User'):
+        if self in to_un_follow.observers:
+            print(f"{self.get_username()} unfollowed {to_un_follow.__username}")
+            to_un_follow.remove_observer(self)
 
     def print_notifications(self):
         print(f"{self.__username}'s notifications:")
-        for notification in self.__notifications:
+        for notification in self.notifications:
             print(notification)
-
-    def update(self, notification):
-        # Handle notifications received by the user.
-        if notification.type == "like":
-            self.__notifications.append(f"{notification.sender} liked your post")
-        elif notification.type == "comment":
-            self.__notifications.append(f"{notification.sender} commented on your post")
-        elif notification.type == "new_post":
-            self.__notifications.append(f"{notification.sender} has a new post")
-
-    def notify_followers(self, notification_type):
-        # Notify all followers about a specific type of notification.
-        for follower in self.__followers:
-            notification = Notification(notification_type, self.get_username())
-            follower.update(notification)
 
     def publish_post(self, kind: str, *args):
         # Publish a post of the specified kind and notify followers.
         post = PostFactory.create_post(self, kind, *args)
         print(post)
-        self.notify_followers("new_post")
+        notification = Notification("new_post", self.get_username())
+        self.notify_observers(notification)
         self.__num_of_posts += 1
         return post
 
