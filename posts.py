@@ -38,7 +38,7 @@ class ImagePost(Post):
 
     def display(self):
        
-        image1 = image.imread(self.image_location)
+        image1 = image.imread(self.__image_location)
         plt.imshow(image1)
         plt.title('Loaded Image')
         plt.axis("off")
