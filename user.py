@@ -30,31 +30,33 @@ class User(followable, follower):
         return self.__password
 
     def follow(self, user: 'User'):
-        if self.__username != user.get_username():
+        if self.__username != user.get_username() and self.__is_Logged:
             if self.start_follow(user):
                 print(f"{self.__username} started following {user.get_username()}")
 
     def unfollow(self, user: 'User'):
-        if self.stop_follow(user):
-            print(f"{self.__username} unfollowed {user.get_username()}")
+        if(self.__is_Logged):
+            if self.stop_follow(user):
+                print(f"{self.__username} unfollowed {user.get_username()}")
 
 
     def publish_post(self, *args):
-        
-        if(args[0] == "Text"):
-            post = TextPost(self, *args)
-        
-        if(args[0] == "Image"):
-            post = ImagePost(self, *args)
-        
-        if(args[0] == "Sale"):
-            post =  SalePost(self, *args)
-        
-        self.notify_followers(f"{self.get_username()} has a new post")
-        print(post)
+        if(self.__is_Logged):
 
-        self.__num_of_posts += 1
+            if(args[0] == "Text"):
+                post = TextPost(self, *args)
+        
+            if(args[0] == "Image"):
+                post = ImagePost(self, *args)
+        
+            if(args[0] == "Sale"):
+                post =  SalePost(self, *args)
+        
+            self.notify_followers(f"{self.get_username()} has a new post")
+            print(post)
 
-        return post
+            self.__num_of_posts += 1
+
+            return post
         
 from posts import *

@@ -37,8 +37,12 @@ class ImagePost(Post):
         self.__image_location = image_location
 
     def display(self):
-        #img = image.imread()
-        #plt.imshow()
+       
+        image1 = image.imread(self.image_location)
+        plt.imshow(image1)
+        plt.title('Loaded Image')
+        plt.axis("off")
+        plt.show()
         print("Shows picture")
     
     def __repr__(self) -> str:
@@ -53,12 +57,12 @@ class SalePost(Post):
         self.__sold = "For sale!"
 
     def discount(self, discount: int , passw: str):
-        if passw == self._owner.get_password() == passw and self.__sold == "For sale!":
+        if passw == self._owner.get_password() == passw and self.__sold == "For sale!" and self._owner.is_logged():
             self.__price *= (1 - discount/100)
             print(f"Discount on {self._owner.get_username()} product! the new price is: {self.__price}")
 
     def sold(self, passw: str):
-        if passw == self._owner.get_password():
+        if passw == self._owner.get_password() and self._owner.is_logged():
             self.__sold = "Sold!"
             print(f"{self._owner.get_username()}'s product is sold")
     
